@@ -1,13 +1,13 @@
 version: '3'
 
 services:
-  onetable-api:
-    build: ./node
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
     volumes:
-      - ../onetable-api:/app
-    ports:
-      - "3100:3100"
-    entrypoint: [bash, -c, "npm run build && pm2-runtime start ./pm2.config.js"]
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   nginx:
     build: ./nginx
@@ -21,10 +21,25 @@ services:
       - "443:443"
     command: "bash -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 
-  certbot:
-    image: certbot/certbot
+  mysql:
+    build: ./mysql
     restart: unless-stopped
+    env_file: ./mysql/.env
     volumes:
-      - ./nginx/certbot/conf:/etc/letsencrypt
-      - ./nginx/certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+      - ../data/mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  onetable-api:
+    build: ./node
+    volumes:
+      - ../onetable-api:/app
+    ports:
+      - "3100:3100"
+    entrypoint:
+      - bash
+      - -c
+      - |
+        /wait-for-it.sh mysql:3306 -t 10
+        npm run build
+        pm2-runtime start ./pm2.config.js

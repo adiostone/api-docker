@@ -7,7 +7,7 @@ if ! [ -x "$(command -v docker-compose)" ]; then
   exit 1
 fi
 
-domains=(onetable.xyz www.onetable.xyz dev.ta.onetable.xyz)
+domains=(onetable.xyz www.onetable.xyz dev.api.onetable.xyz)
 rsa_key_size=4096
 data_path="./nginx/certbot"
 email="to@ihooni.com" # Adding a valid address is strongly recommended

@@ -40,6 +40,7 @@ services:
       - bash
       - -c
       - |
-        /wait-for-it.sh mysql:3306 -t 10
+        npm install
         npm run build
+        /wait-for-it.sh mysql:3306 -t 10
         pm2-runtime start ./pm2.config.js

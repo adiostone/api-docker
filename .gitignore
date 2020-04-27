@@ -3,3 +3,5 @@
 /nginx/certbot
 
 /mysql/.env
+
+/redis/.env

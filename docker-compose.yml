@@ -30,6 +30,15 @@ services:
     ports:
       - "3306:3306"
 
+  redis:
+    image: redis:latest
+    restart: unless-stopped
+    env_file: ./redis/.env
+    volumes:
+      - ../data/redis:/data
+    ports:
+      - "6379:6379"
+
   onetable-api:
     build: ./node
     volumes:
@@ -43,4 +52,5 @@ services:
         npm install
         npm run build
         /wait-for-it.sh mysql:3306 -t 10
+        /wait-for-it.sh redis:6379 -t 10
         pm2-runtime start ./pm2.config.js

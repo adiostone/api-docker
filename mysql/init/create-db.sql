@@ -1,0 +1,2 @@
+CREATE DATABASE IF NOT EXISTS `onetable-dist`;
+CREATE DATABASE IF NOT EXISTS `onetable-dev`;

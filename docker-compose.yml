@@ -39,10 +39,10 @@ services:
     ports:
       - "6379:6379"
 
-  onetable-api:
+  api-dev:
     build: ./node
     volumes:
-      - ../onetable-api:/app
+      - ../api-dev:/app
     ports:
       - "3100:3100"
     entrypoint:
